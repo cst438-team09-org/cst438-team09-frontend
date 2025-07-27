@@ -69,7 +69,7 @@ const CourseEnroll = (props) => {
 
         if (response.ok) {
             const data = await response.json();
-       setMessage(`Successfully enrolled in ${data.courseId}: ${data.title}`)
+       setMessage(`Successfully enrolled in ${data.courseId}: ${data.title}`);
 
         } else {
             const data = await response.json();
@@ -83,10 +83,7 @@ const CourseEnroll = (props) => {
     <div>
       <Messages response={message} />
       <h3>Open Sections Available for Enrollment</h3>
-      <p>To be implemented. Display a table of sections that are open for enrollment with columns in headers.
-        The last column is an "Add" button that when clicked will first confirm that user want to add
-        the course, then adds the course to the students schedule.
-      </p>
+
       <table className="Center" >
         <thead>
         <tr>
@@ -105,7 +102,7 @@ const CourseEnroll = (props) => {
               <td>{s.building}</td>
               <td>{s.room}</td>
               <td>{s.times}</td>
-              <td>{s.instructor}</td>
+              <td>{s.instructorName}</td>
               <td><button onClick={() => confirmEnroll(s.secNo)}>Add</button></td>
             </tr>
         ))}

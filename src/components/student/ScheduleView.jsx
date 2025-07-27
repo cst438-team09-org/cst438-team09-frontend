@@ -41,7 +41,41 @@ const ScheduleView = () => {
     } catch (err) {
       setMessage(err);
     }
-  }
+  };
+  const confirmDrop = async (enrollmentId) => {
+    confirmAlert({
+      title: 'Confirm to Drop',
+      message: 'Are you sure you want to drop this course?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => doDrop(enrollmentId)
+        },
+        {
+          label: 'No',
+        }
+      ]
+    });
+  };
+
+  const doDrop = async (enrollmentId) => {
+    const response = await fetch(`http://localhost:8080/enrollments/${enrollmentId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': sessionStorage.getItem("jwt"),
+      },
+    });
+
+    if (response.ok) {
+      fetchEnrollments(term.year, term.semester);
+      setMessage('Successfully dropped the course');
+
+    } else {
+      const data = await response.json();
+      setMessage(data);
+    }
+  };
 
 
   const headings = ["enrollmentId", "secNo", "courseId", "secId", "building", "room", "times", ""];
@@ -50,12 +84,28 @@ const ScheduleView = () => {
     <div>
       <Messages response={message} />
       <SelectTerm buttonText="Get Schedule" onClick={prefetchEnrollments} />
-      <p>To be implemented.  Display a table with the sections the student is enrolled in for the given term.
-        For each section, display the columns as given in headings.
-        For each table row, a Drop button will allow the student to drop the section.
-        Confirm that the user wants to drop before doing the REST delete request.
-      </p>
 
+      <table className="Center" >
+        <thead>
+        <tr>
+          {headings.map((s, idx) => (<th key={idx}>{s}</th>))}
+        </tr>
+        </thead>
+        <tbody>
+        {enrollments.map((e) => (
+            <tr key={e.enrollmentId}>
+              <td>{e.enrollmentId}</td>
+              <td>{e.sectionNo}</td>
+              <td>{e.courseId}</td>
+              <td>{e.sectionId}</td>
+              <td>{e.building}</td>
+              <td>{e.room}</td>
+              <td>{e.times}</td>
+              <td><button onClick={() => confirmDrop(e.enrollmentId)}>Drop</button></td>
+            </tr>
+        ))}
+        </tbody>
+      </table>
     </div>
   );
 

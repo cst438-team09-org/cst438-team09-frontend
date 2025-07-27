@@ -38,7 +38,32 @@ const EnrollmentsView = () => {
     fetchEnrollments()
   }, []);
 
+  const setGrade = (enrollmentId, grade) => {
+    setEnrollments((enrollments) =>
+        enrollments.map((enrollment) =>
+            enrollment.enrollmentId === enrollmentId ? { ...enrollment, grade: grade } : enrollment
+        )
+    );
+  }
 
+  const saveGrades = async () => {
+    const response = await fetch(`http://localhost:8080/enrollments`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': sessionStorage.getItem("jwt"),
+      },
+      body: JSON.stringify(enrollments)
+    });
+
+    if (response.ok) {
+      setMessage('Successfully saved grades');
+
+    } else {
+      const data = await response.json();
+      setMessage(data);
+    }
+  };
 
   const headers = ['enrollment id', 'student id', 'name', 'email', 'grade'];
 
@@ -49,6 +74,26 @@ const EnrollmentsView = () => {
       <p>To be implemented. Display table with column headers as given in headers.
         Allow user to edit the grade.  One button to Save all grades.
       </p>
+      <table className="Center" >
+        <thead>
+        <tr>
+          {headers.map((s, idx) => (<th key={idx}>{s}</th>))}
+        </tr>
+        </thead>
+        <tbody>
+        {enrollments.map((e) => (
+            <tr key={e.enrollmentId}>
+              <td>{e.enrollmentId}</td>
+              <td>{e.studentId}</td>
+              <td>{e.name}</td>
+              <td>{e.email}</td>
+              <td>{e.grade}</td>
+              <td><input type="text" value={e.grade} onChange={(evt) => {setGrade(e.enrollmentId, evt.target.value)} }/></td>
+            </tr>
+        ))}
+        </tbody>
+      </table>
+      <button onClick={() => saveGrades()}>Save Grades</button>
     </>
   );
 }
