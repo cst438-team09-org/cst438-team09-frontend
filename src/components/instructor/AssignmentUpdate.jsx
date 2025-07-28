@@ -26,21 +26,26 @@ const AssignmentUpdate = ({ editAssignment, onClose }) => {
   };
 
   const onSave = async () => {
+    if (!assignment.dueDate) {
+      setMessage("Due date is required");
+      return;
+    }
     try {
+      const body = {
+        id:       assignment.id,
+        title:    assignment.title,
+        dueDate:  assignment.dueDate,
+        courseId: assignment.courseId,
+        secNo:    assignment.secNo,
+        secId:    assignment.secId,
+      };
       const response = await fetch(`${GRADEBOOK_URL}/assignments`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: sessionStorage.getItem('jwt'),
         },
-        body: JSON.stringify({
-          id:       assignment.id,
-          title:    assignment.title,
-          dueDate:  assignment.dueDate,
-          courseId: assignment.courseId,
-          secNo:    assignment.secNo,
-          secId:    assignment.secId,
-        }),
+        body: JSON.stringify(body),
       });
       if (response.ok) {
         dialogClose();
@@ -68,6 +73,7 @@ const AssignmentUpdate = ({ editAssignment, onClose }) => {
           <input
               type="text"
               name="title"
+              required
               placeholder="Title"
               value={assignment.title || ''}
               onChange={handleChange}
@@ -76,6 +82,7 @@ const AssignmentUpdate = ({ editAssignment, onClose }) => {
           <input
               type="date"
               name="dueDate"
+              required
               placeholder="Due Date"
               value={assignment.dueDate || ''}
               onChange={handleChange}
