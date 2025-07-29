@@ -39,6 +39,10 @@ const EnrollmentsView = () => {
   }, []);
 
   const setGrade = (enrollmentId, grade) => {
+    if (typeof grade == 'string' && grade.trim() == ''){
+      grade = null;
+
+    }
     setEnrollments((enrollments) =>
         enrollments.map((enrollment) =>
             enrollment.enrollmentId === enrollmentId ? { ...enrollment, grade: grade } : enrollment
@@ -47,7 +51,7 @@ const EnrollmentsView = () => {
   }
 
   const saveGrades = async () => {
-    const response = await fetch(`http://localhost:8080/enrollments`, {
+    const response = await fetch(`http://localhost:8081/enrollments`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -87,7 +91,7 @@ const EnrollmentsView = () => {
               <td>{e.studentId}</td>
               <td>{e.name}</td>
               <td>{e.email}</td>
-              <td>{e.grade}</td>
+
               <td><input type="text" value={e.grade} onChange={(evt) => {setGrade(e.enrollmentId, evt.target.value)} }/></td>
             </tr>
         ))}
