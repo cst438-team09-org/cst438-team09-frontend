@@ -50,7 +50,7 @@ const AssignmentsStudentView = () => {
                     <tbody>
                     {assignments.map((assignment, index) => (
                         <tr key={index}>
-                            <td>{assignment.course}</td>
+                            <td>{assignment.courseId}</td>
                             <td>{assignment.title}</td>
                             <td>{new Date(assignment.dueDate).toLocaleDateString()}</td>
                             <td>{assignment.score !== null ? assignment.score : 'N/A'}</td>
