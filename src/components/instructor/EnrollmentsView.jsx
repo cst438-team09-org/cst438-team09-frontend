@@ -75,9 +75,6 @@ const EnrollmentsView = () => {
     <>
       <h3> {courseId}-{secId} Enrollments</h3>
       <Messages response={message} />
-      <p>To be implemented. Display table with column headers as given in headers.
-        Allow user to edit the grade.  One button to Save all grades.
-      </p>
       <table className="Center" >
         <thead>
         <tr>
