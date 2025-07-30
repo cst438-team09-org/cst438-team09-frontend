@@ -16,19 +16,17 @@ const ScheduleView = () => {
   const prefetchEnrollments = ({ year, semester }) => {
     setTerm({ year, semester });
     fetchEnrollments(year, semester);
-  }
+  };
 
   const fetchEnrollments = async (year, semester) => {
     try {
-      const response = await fetch(`${REGISTRAR_URL}/enrollments?year=${year}&semester=${semester}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': sessionStorage.getItem('jwt'),
-          },
-        }
-      );
+      const response = await fetch(`${REGISTRAR_URL}/enrollments?year=${year}&semester=${semester}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': sessionStorage.getItem('jwt'),
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -39,46 +37,50 @@ const ScheduleView = () => {
         setMessage(body);
       }
     } catch (err) {
-      setMessage(err);
+      setMessage(err.message || 'An error occurred while fetching enrollments.');
     }
   };
-  const confirmDrop = async (enrollmentId) => {
+
+  const dropEnrollment = async (enrollmentId) => {
+    try {
+      const response = await fetch(`${REGISTRAR_URL}/enrollments/${enrollmentId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': sessionStorage.getItem('jwt'),
+        },
+      });
+
+      if (response.ok) {
+        setEnrollments(enrollments.filter(enrollment => enrollment.enrollmentId !== enrollmentId));
+        setMessage('Enrollment dropped successfully.');
+      } else {
+        const body = await response.json();
+        setMessage(body);
+      }
+    } catch (err) {
+      setMessage(err.message || 'An error occurred while dropping the enrollment.');
+    }
+  };
+
+  const handleDropClick = (enrollmentId) => {
     confirmAlert({
-      title: 'Confirm to Drop',
-      message: 'Are you sure you want to drop this course?',
+      title: 'Confirm to drop',
+      message: 'Are you sure you want to drop this section?',
       buttons: [
         {
           label: 'Yes',
-          onClick: () => doDrop(enrollmentId)
+          onClick: () => dropEnrollment(enrollmentId)
         },
         {
           label: 'No',
+          onClick: () => {}
         }
       ]
     });
   };
 
-  const doDrop = async (enrollmentId) => {
-    const response = await fetch(`http://localhost:8080/enrollments/${enrollmentId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': sessionStorage.getItem("jwt"),
-      },
-    });
-
-    if (response.ok) {
-      fetchEnrollments(term.year, term.semester);
-      setMessage('Successfully dropped the course');
-
-    } else {
-      const data = await response.json();
-      setMessage(data);
-    }
-  };
-
-
-  const headings = ["enrollmentId", "secNo", "courseId", "secId", "building", "room", "times", ""];
+  const headings = ["Enrollment ID", "Section No", "Course ID", "Section ID", "Building", "Room", "Times", "Actions"];
 
   return (
     <div>
@@ -101,7 +103,7 @@ const ScheduleView = () => {
               <td>{e.building}</td>
               <td>{e.room}</td>
               <td>{e.times}</td>
-              <td><button onClick={() => confirmDrop(e.enrollmentId)}>Drop</button></td>
+              <td><button onClick={() => handleDropClick(e.enrollmentId)}>Drop</button></td>
             </tr>
         ))}
         </tbody>
