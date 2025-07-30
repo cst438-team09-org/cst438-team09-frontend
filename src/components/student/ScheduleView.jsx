@@ -6,6 +6,7 @@ import SelectTerm from '../SelectTerm';
 import Messages from '../Messages';
 
 const ScheduleView = () => {
+
   // student views their class schedule for a given term
 
   const [enrollments, setEnrollments] = useState([]);
@@ -82,40 +83,34 @@ const ScheduleView = () => {
   const headings = ["Enrollment ID", "Section No", "Course ID", "Section ID", "Building", "Room", "Times", "Actions"];
 
   return (
-      <div>
-        <Messages response={message} />
-        <SelectTerm buttonText="Get Schedule" onClick={prefetchEnrollments} />
-        {enrollments.length > 0 ? (
-            <table>
-              <thead>
-              <tr>
-                {headings.map((heading, index) => (
-                    <th key={index}>{heading}</th>
-                ))}
-              </tr>
-              </thead>
-              <tbody>
-              {enrollments.map((enrollment) => (
-                  <tr key={enrollment.enrollmentId}>
-                    <td>{enrollment.enrollmentId}</td>
-                    <td>{enrollment.secNo}</td>
-                    <td>{enrollment.courseId}</td>
-                    <td>{enrollment.secId}</td>
-                    <td>{enrollment.building}</td>
-                    <td>{enrollment.room}</td>
-                    <td>{enrollment.times}</td>
-                    <td>
-                      <button onClick={() => handleDropClick(enrollment.enrollmentId)}>Drop</button>
-                    </td>
-                  </tr>
-              ))}
-              </tbody>
-            </table>
-        ) : (
-            <p>No enrollments found for the selected term.</p>
-        )}
-      </div>
+    <div>
+      <Messages response={message} />
+      <SelectTerm buttonText="Get Schedule" onClick={prefetchEnrollments} />
+
+      <table className="Center" >
+        <thead>
+        <tr>
+          {headings.map((s, idx) => (<th key={idx}>{s}</th>))}
+        </tr>
+        </thead>
+        <tbody>
+        {enrollments.map((e) => (
+            <tr key={e.enrollmentId}>
+              <td>{e.enrollmentId}</td>
+              <td>{e.sectionNo}</td>
+              <td>{e.courseId}</td>
+              <td>{e.sectionId}</td>
+              <td>{e.building}</td>
+              <td>{e.room}</td>
+              <td>{e.times}</td>
+              <td><button onClick={() => handleDropClick(e.enrollmentId)}>Drop</button></td>
+            </tr>
+        ))}
+        </tbody>
+      </table>
+    </div>
   );
-};
+
+}
 
 export default ScheduleView;
