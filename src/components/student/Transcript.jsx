@@ -61,7 +61,7 @@ const Transcript = () => {
                             <td>{course.section}</td>
                             <td>{course.title}</td>
                             <td>{course.credits}</td>
-                            <td>{course.getSection().g}</td>
+                            <td>{course.grade}</td>
                         </tr>
                     ))}
                     </tbody>
